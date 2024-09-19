@@ -8,6 +8,9 @@ const LoginPage = () => {
   const signInWithProvider = async (provider: Provider) => {
     const { error } = await auth.signInWithOAuth({
       provider: provider,
+      options: {
+        redirectTo: "http://localhost:5173/dashboard",
+      },
     });
     console.error(error);
     // Handle errors gracefully

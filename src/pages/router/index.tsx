@@ -8,6 +8,7 @@ import SignInPage from "../auth/LoginPage";
 import SignUpPage from "../auth/SignUpPage";
 import AuthProtectedRoute from "./AuthProtectedRoute";
 import TaskList from "../../components/TaskList";
+import Dashboard from "../dashboard";
 
 const router = createBrowserRouter([
   {
@@ -47,7 +48,7 @@ const router = createBrowserRouter([
         children: [
           {
             path: "/dashboard",
-            element: <>DASHBOARD</>,
+            element: <Dashboard />,
           },
         ],
       },
