@@ -1,30 +1,17 @@
-import {
-  createContext,
-  Dispatch,
-  ReactNode,
-  SetStateAction,
-  useContext,
-  useState,
-} from "react";
-
-interface Task {
-  name: string;
-  status: string;
-  description: string;
-}
-
-const initTasks = [{ name: "", status: "", description: "" }];
+import { createContext, ReactNode, useContext, useState } from "react";
+import { ITaskContainer } from "../types";
 
 const TasksContext = createContext<{
-  allTasks: Task[];
-  setAllTasks: Dispatch<SetStateAction<Task[]>>;
-}>({ allTasks: initTasks, setAllTasks: () => null });
+  containers: Map<string, ITaskContainer>;
+}>({
+  containers: new Map(),
+});
 
 const TasksProvider = ({ children }: { children: ReactNode }) => {
-  const [allTasks, setAllTasks] = useState(initTasks);
+  const [containers] = useState<Map<string, ITaskContainer>>(new Map());
+
   const value = {
-    allTasks,
-    setAllTasks,
+    containers,
   };
 
   return (
