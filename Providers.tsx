@@ -1,12 +1,15 @@
 import { Outlet } from "react-router-dom";
 import AuthProvider from "./src/contexts/Auth";
 import Header from "./src/components/Header";
+import TasksProvider from "./src/contexts/Tasks";
 
 const Providers = () => {
   return (
     <AuthProvider>
-      <Header />
-      <Outlet />
+      <TasksProvider>
+        <Header />
+        <Outlet />
+      </TasksProvider>
     </AuthProvider>
   );
 };

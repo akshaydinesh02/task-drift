@@ -10,7 +10,7 @@ const Header = () => {
 
   return (
     <div className="fixed w-full">
-      <div className="py-2 px-12 border-b bg-gray-20 border-b border-gray-400">
+      <div className="py-2 px-12 border-b bg-gray-50 border-b border-gray-400">
         <div className="max-w-5xl mx-auto flex justify-between">
           <h1 className="text-xl font-extrabold">Task Drift &#10004;</h1>
           {user ? (
