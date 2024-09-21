@@ -15,7 +15,6 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onSubmit }) => {
   } = useForm<SignUpFormSchema>({
     resolver: zodResolver(signUpSchema),
   });
-  console.log(onSubmit);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="w-full">

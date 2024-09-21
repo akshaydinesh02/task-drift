@@ -1,5 +1,6 @@
 import Modal from "react-modal";
-import { IModalProps } from "../types";
+import { IModalFormProps, IModalProps } from "../types";
+import React, { ReactNode, ReactElement } from "react";
 
 const customStyles = {
   content: {
@@ -19,6 +20,18 @@ const customStyles = {
 
 const ModalComponent = (props: IModalProps) => {
   const { isOpen, onRequestClose, contentLabel, onAfterOpen, children } = props;
+
+  const renderChildrenWithProps = (children: ReactNode) => {
+    return React.Children.map(children, (child) => {
+      if (React.isValidElement(child)) {
+        return React.cloneElement(child as ReactElement<IModalFormProps>, {
+          onRequestClose,
+        });
+      }
+      return child;
+    });
+  };
+
   return (
     <div>
       <Modal
@@ -28,7 +41,7 @@ const ModalComponent = (props: IModalProps) => {
         style={customStyles}
         contentLabel={contentLabel}
       >
-        {children}
+        {renderChildrenWithProps(children)}
       </Modal>
     </div>
   );

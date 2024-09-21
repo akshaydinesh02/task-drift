@@ -5,7 +5,6 @@ import { SignUpFormSchema } from "../../validation/authSchema";
 
 const SignUpPage = () => {
   const signUpWithEmail = async (data: SignUpFormSchema) => {
-    console.log("signUpWithEmail", data);
     const { error } = await auth.signUp({
       email: data.email,
       password: data.password,

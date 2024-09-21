@@ -1,26 +1,28 @@
 import { priorityColors } from "../../constants/colors";
 import { Draggable, Droppable } from "react-beautiful-dnd";
+import { ITaskItem } from "../../types";
 
 interface IVerticalCardProps {
   name: string;
-  tasks?: Array<{
-    name: string;
-    status: string;
-    description: string;
-    priority: string;
-    id: string;
-  }>;
+  openAddTaskModal: (containerId: string, task?: ITaskItem) => void;
+  containerId: string;
+  tasks?: ITaskItem[] | null;
 }
 
 const VerticalCard = (props: IVerticalCardProps) => {
-  const { name, tasks } = props;
+  const { name, tasks, openAddTaskModal, containerId } = props;
   return (
-    <section className="bg-gray-300 w-full rounded-md h-[90%] overflow-y-scroll">
+    <section className="bg-gray-300 w-full rounded-md h-[90%] overflow-y-scroll pb-8">
       <div className="flex items-center justify-between w-full sticky top-0 backdrop-blur-xl">
         <h1 className="text-start font-extrabold text-gray-600 capitalize px-4 py-2">
           {name}
         </h1>
-        <button className="text-xl px-4 py-2">&#43;</button>
+        <button
+          onClick={() => openAddTaskModal(containerId)}
+          className="text-xl px-4 py-2"
+        >
+          &#43;
+        </button>
       </div>
       <Droppable droppableId={name} type="group">
         {(provided) => (
@@ -33,6 +35,7 @@ const VerticalCard = (props: IVerticalCardProps) => {
               <Draggable draggableId={task.id} key={task.id} index={_i}>
                 {(provided) => (
                   <div
+                    onClick={() => openAddTaskModal(containerId, task)}
                     {...provided.dragHandleProps}
                     {...provided.draggableProps}
                     ref={provided.innerRef}

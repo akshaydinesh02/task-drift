@@ -3,6 +3,7 @@ import { ReactNode } from "react";
 import { Styles } from "react-modal";
 import { z } from "zod";
 import { containerSchema } from "../validation/containerSchema";
+import { taskSchema } from "../validation/taskSchema";
 
 export enum TaskPriority {
   Low = "low",
@@ -10,11 +11,16 @@ export enum TaskPriority {
   High = "high",
 }
 
+export enum TaskStatus {
+  Complete = "complete",
+  InComplete = "incomplete",
+}
+
 export interface ITaskItem {
   id: string;
   name: string;
   priority: TaskPriority;
-  status: string;
+  // status: TaskStatus;
   description: string;
 }
 
@@ -34,4 +40,23 @@ export interface IModalProps {
   onAfterOpen?: () => void;
 }
 
-export type FormData = z.infer<typeof containerSchema>;
+export interface IContainer {
+  string: ITaskContainer;
+}
+
+export interface ICurrentEditingTask {
+  containerId: string;
+  task: ITaskItem;
+}
+
+export interface IModalFormProps {
+  isOpen?: boolean;
+  onRequestClose?: () => void;
+}
+
+export interface ITaskForm extends IModalFormProps {
+  currentEditingTask?: ICurrentEditingTask | null;
+}
+
+export type ContainerFormData = z.infer<typeof containerSchema>;
+export type TaskFormData = z.infer<typeof taskSchema>;

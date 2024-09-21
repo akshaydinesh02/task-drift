@@ -1,59 +1,75 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { containerSchema } from "../../validation/containerSchema";
-import { FormData, TaskPriority } from "../../types";
+import { ContainerFormData, IModalFormProps, TaskPriority } from "../../types";
 import { useTasks } from "../../contexts/Tasks";
 import { v4 as uuidv4 } from "uuid";
 
-const ContainerForm = () => {
+const ContainerForm = (props: IModalFormProps) => {
+  const { onRequestClose } = props;
   const {
     register,
     handleSubmit,
     formState: { errors },
     setError,
-  } = useForm<FormData>({
+  } = useForm<ContainerFormData>({
     resolver: zodResolver(containerSchema),
   });
 
   const { containers } = useTasks();
 
-  const onSubmit = (data: FormData) => {
-    // Check if a container with the same name already exists
-    const isDuplicate = Array.from(containers.values()).some(
-      (container) => container?.title === data.containerName
-    );
+  const handleAddContainer = (data: ContainerFormData) => {
+    try {
+      // Only allow 6 containers at max
+      console.log(containers.size);
+      if (containers.size >= 6) {
+        setError("containerName", {
+          type: "manual",
+          message: "You can only create upto 6 containers",
+        });
+        return;
+      }
+      // Check if a container with the same name already exists
+      const isDuplicate = Array.from(containers.values()).some(
+        (container) => container?.title === data.containerName
+      );
 
-    if (isDuplicate) {
-      setError("containerName", {
-        type: "manual",
-        message: "Container name already exists",
+      if (isDuplicate) {
+        setError("containerName", {
+          type: "manual",
+          message: "Container name already exists",
+        });
+        return;
+      }
+
+      // New container
+      const newContainerId = uuidv4();
+      const newTaskId = uuidv4();
+      containers.set(newContainerId, {
+        id: newContainerId,
+        title: data.containerName,
+        tasks: [
+          {
+            id: newTaskId,
+            name: "Click here to edit",
+            description: "Write task description here.",
+            priority: TaskPriority.High,
+          },
+        ],
       });
-      return;
-    }
 
-    const newId = uuidv4();
-    containers.set(newId, {
-      id: newId,
-      title: data.containerName,
-      tasks: [
-        {
-          id: "task-id-2",
-          name: "Test-task",
-          description: "Test desc",
-          priority: TaskPriority.High,
-          status: "incomplete",
-        },
-      ],
-    });
-    console.log("New containers", containers);
+      if (onRequestClose) onRequestClose();
+    } catch (error: unknown) {
+      console.log("Error while adding container", error);
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(handleAddContainer)}>
       <div className="flex flex-col justify-center gap-2 mb-4">
-        {/* <label className="font-bold" htmlFor="containerName">
+        <label className="font-bold" htmlFor="containerName">
           Container Name
-        </label> */}
+        </label>
         <input
           id="containerName"
           {...register("containerName")}
