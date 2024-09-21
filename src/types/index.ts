@@ -56,6 +56,7 @@ export interface IModalFormProps {
 
 export interface ITaskForm extends IModalFormProps {
   currentEditingTask?: ICurrentEditingTask | null;
+  newTaskContainerId?: string | null;
 }
 
 export type ContainerFormData = z.infer<typeof containerSchema>;

@@ -14,9 +14,12 @@ const VerticalCard = (props: IVerticalCardProps) => {
   return (
     <section className="bg-gray-300 w-full rounded-md h-[90%] overflow-y-scroll pb-8">
       <div className="flex items-center justify-between w-full sticky top-0 backdrop-blur-xl">
-        <h1 className="text-start font-extrabold text-gray-600 capitalize px-4 py-2">
-          {name}
-        </h1>
+        <div className="text-start font-extrabold text-gray-600 capitalize px-4 py-2 flex items-center gap-2">
+          <button className="text-md border w-4 h-4 flex justify-center items-center rounded-full p-4 bg-gray-600 border-gray-500 text-gray-100">
+            &#9998;
+          </button>
+          <p>{name}</p>
+        </div>
         <button
           onClick={() => openAddTaskModal(containerId)}
           className="text-xl px-4 py-2"
@@ -24,6 +27,7 @@ const VerticalCard = (props: IVerticalCardProps) => {
           &#43;
         </button>
       </div>
+
       <Droppable droppableId={containerId} type="group">
         {(provided) => (
           <div
@@ -39,9 +43,8 @@ const VerticalCard = (props: IVerticalCardProps) => {
                     {...provided.dragHandleProps}
                     {...provided.draggableProps}
                     ref={provided.innerRef}
-                    className="p-2 bg-white rounded-md flex justify-between items-center"
+                    className="p-2 flex flex bg-white rounded-md justify-start gap-4 items-center w-full"
                   >
-                    <p>{task.name}</p>
                     <p
                       className={`p-2 h-6 w-6 rounded-full ${priorityColors.get(
                         task.priority
@@ -49,6 +52,16 @@ const VerticalCard = (props: IVerticalCardProps) => {
                     >
                       &nbsp;
                     </p>
+                    <p className="w-[90%]">{task.name}</p>
+                    <button
+                      onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+                        e.stopPropagation();
+                        console.log("On click bin");
+                      }}
+                      className="flex items-center justify-center w-[10%]"
+                    >
+                      &#128465;
+                    </button>
                   </div>
                 )}
               </Draggable>

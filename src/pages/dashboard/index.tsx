@@ -12,29 +12,37 @@ Modal.setAppElement("#root");
 
 const Dashboard = () => {
   const containers = useTasks().containers;
-  const [addContainerModalOpen, setAddContainerModalOpen] =
-    useState<boolean>(false);
+  const [containerModalOpen, setContainerModalOpen] = useState<boolean>(false);
   const [taskModalOpen, setTaskModalOpen] = useState<boolean>(false);
+  const [containerEditModalOpen, setContainerEditModalOpen] =
+    useState<boolean>(false);
   const [currentEditingTask, setCurrentEditingTask] =
     useState<ICurrentEditingTask | null>(null);
+  const [newTaskContainerId, setNewTaskContainerId] = useState<string | null>(
+    null
+  );
 
   const onRequestContainerModalClose = useCallback(
-    () => setAddContainerModalOpen(false),
+    () => setContainerModalOpen(false),
     []
   );
   const onRequestTaskModalClose = useCallback(() => {
     setTaskModalOpen(false);
     setCurrentEditingTask(null);
+    setNewTaskContainerId(null);
   }, []);
 
   const openAddContainerModal = useCallback(
-    () => setAddContainerModalOpen(true),
+    () => setContainerModalOpen(true),
     []
   );
 
   const openAddTaskModal = useCallback(
     (containerId: string, task?: ITaskItem) => {
       setTaskModalOpen(true);
+      if (!task && containerId) {
+        setNewTaskContainerId(containerId);
+      }
       if (task && containerId) {
         setCurrentEditingTask({ containerId, task });
       }
@@ -104,16 +112,21 @@ const Dashboard = () => {
         </DragDropContext>
       </div>
       <ModalComponent
-        isOpen={taskModalOpen || addContainerModalOpen}
+        isOpen={taskModalOpen || containerModalOpen || containerEditModalOpen}
         onRequestClose={
           taskModalOpen ? onRequestTaskModalClose : onRequestContainerModalClose
         }
         contentLabel={taskModalOpen ? "Add Task" : "Add Container"}
       >
-        {addContainerModalOpen ? (
-          <ContainerForm />
+        {/* {containerModalOpen ? <ContainerForm /> : <></>} */}
+        {containerModalOpen ? <ContainerForm /> : <></>}
+        {taskModalOpen ? (
+          <TaskForm
+            currentEditingTask={currentEditingTask}
+            newTaskContainerId={newTaskContainerId}
+          />
         ) : (
-          <TaskForm currentEditingTask={currentEditingTask} />
+          <></>
         )}
       </ModalComponent>
     </main>

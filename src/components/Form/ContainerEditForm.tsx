@@ -1,24 +1,28 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { containerSchema } from "../../validation/containerSchema";
-import { ContainerFormData, IModalFormProps, TaskPriority } from "../../types";
+import {
+  ContainerEditFormData,
+  IModalFormProps,
+  TaskPriority,
+} from "../../types";
 import { useTasks } from "../../contexts/Tasks";
 import { v4 as uuidv4 } from "uuid";
 
-const ContainerForm = (props: IModalFormProps) => {
+const ContainerEditForm = (props: IModalFormProps) => {
   const { onRequestClose } = props;
   const {
     register,
     handleSubmit,
     formState: { errors },
     setError,
-  } = useForm<ContainerFormData>({
+  } = useForm<ContainerEditFormData>({
     resolver: zodResolver(containerSchema),
   });
 
   const { containers } = useTasks();
 
-  const handleAddContainer = (data: ContainerFormData) => {
+  const handleAddContainer = (data: ContainerEditFormData) => {
     try {
       // Only allow 6 containers at max
       console.log(containers.size);
@@ -29,7 +33,7 @@ const ContainerForm = (props: IModalFormProps) => {
         });
         return;
       }
-      // Check for duplicate container name
+      // Check if a container with the same name already exists
       const isDuplicate = Array.from(containers.values()).some(
         (container) => container?.title === data.containerName
       );
@@ -42,7 +46,7 @@ const ContainerForm = (props: IModalFormProps) => {
         return;
       }
 
-      // Create new container (default task)
+      // New container
       const newContainerId = uuidv4();
       const newTaskId = uuidv4();
       containers.set(newContainerId, {
@@ -67,9 +71,6 @@ const ContainerForm = (props: IModalFormProps) => {
   return (
     <form onSubmit={handleSubmit(handleAddContainer)}>
       <div className="flex flex-col justify-center gap-2 mb-4">
-        <h1 className="text-center text-3xl font-extrabold mb-4">
-          Add Container
-        </h1>
         <label className="font-bold" htmlFor="containerName">
           Container Name
         </label>
@@ -88,10 +89,10 @@ const ContainerForm = (props: IModalFormProps) => {
         className="flex items-center justify-center w-full border p-2 rounded-md bg-blue-300"
         type="submit"
       >
-        Add
+        Submit
       </button>
     </form>
   );
 };
 
-export default ContainerForm;
+export default ContainerEditForm;

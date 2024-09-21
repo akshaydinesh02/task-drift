@@ -1,9 +1,10 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ITaskForm, TaskFormData, TaskPriority } from "../../types";
+import { ITaskForm, ITaskItem, TaskFormData, TaskPriority } from "../../types";
 import { taskSchema } from "../../validation/taskSchema";
 import { useCallback } from "react";
 import { useTasks } from "../../contexts/Tasks";
+import { v4 as uuidv4 } from "uuid";
 
 const initData = {
   name: "",
@@ -12,7 +13,7 @@ const initData = {
 };
 
 const TaskForm = (props: ITaskForm) => {
-  const { currentEditingTask, onRequestClose } = props;
+  const { currentEditingTask, onRequestClose, newTaskContainerId } = props;
   const {
     register,
     handleSubmit,
@@ -34,35 +35,58 @@ const TaskForm = (props: ITaskForm) => {
     (data: TaskFormData) => {
       try {
         const { name, description, priority } = data;
-        if (currentEditingTask) {
-          // Editing task
-          const original = containers.get(currentEditingTask.containerId);
-          console.log(original);
 
-          const object = original?.tasks?.find(
-            (t) => t.id === currentEditingTask.task.id
-          );
-          console.log(object);
-          if (object) {
-            object.name = name;
-            object.description = description || "";
-            object.priority = priority;
-          }
-          if (onRequestClose) onRequestClose();
+        const containerId = currentEditingTask
+          ? currentEditingTask.containerId
+          : newTaskContainerId;
+        const container = containers.get(containerId!);
+
+        if (!container) {
+          console.error("Container not found");
           return;
         }
-        // New task
+
+        // Update old/add new task
+        const newTask: ITaskItem = {
+          id: currentEditingTask ? currentEditingTask.task.id : uuidv4(),
+          name,
+          description: description || "",
+          priority,
+        };
+
+        if (currentEditingTask) {
+          const taskIndex = container.tasks?.findIndex(
+            (task) => task.id === currentEditingTask.task.id
+          );
+
+          if (taskIndex !== undefined && taskIndex >= 0) {
+            container.tasks![taskIndex] = newTask;
+          }
+        } else {
+          // Add New task
+          console.log("Else block", data);
+
+          // Add new task
+          container.tasks = container.tasks
+            ? [...container.tasks, newTask]
+            : [newTask];
+        }
+
+        // Close modal
         if (onRequestClose) onRequestClose();
       } catch (error: unknown) {
         console.error("Error while adding/updating task", error);
       }
     },
-    [currentEditingTask, onRequestClose, containers]
+    [currentEditingTask, onRequestClose, containers, newTaskContainerId]
   );
 
   return (
     <form onSubmit={handleSubmit(handleAddTask)}>
       <div className="flex flex-col justify-center gap-2 mb-4">
+        <h1 className="text-center text-3xl font-extrabold">
+          {currentEditingTask ? "Edit Task" : "Add Task"}
+        </h1>
         <label className="font-bold" htmlFor="name">
           Task Name
         </label>

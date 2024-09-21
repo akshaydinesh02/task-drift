@@ -4,9 +4,12 @@ const Hero = () => {
       <div className="flex justify-between max-w-5xl mx-auto bg-gray-200">
         <div className="w-[40%] flex flex-col gap-16 items-center justify-center p-6">
           <h1 className="px-2 text-5xl font-bold tracking-wide text-pretty space-y-8">
-            Manage every task, together with{" "}
-            <span className="text-blue-800 font-extrabold">Task Drift</span> for
-            absolutely{" "}
+            Manage every task with
+            <span className="text-blue-800 font-extrabold">
+              <br />
+              Task Drift
+            </span>{" "}
+            for absolutely{" "}
             <span className="uppercase text-rose-500 underline underline-offset-8">
               free!
             </span>
