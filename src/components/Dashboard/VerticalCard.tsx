@@ -24,7 +24,7 @@ const VerticalCard = (props: IVerticalCardProps) => {
           &#43;
         </button>
       </div>
-      <Droppable droppableId={name} type="group">
+      <Droppable droppableId={containerId} type="group">
         {(provided) => (
           <div
             {...provided.droppableProps}

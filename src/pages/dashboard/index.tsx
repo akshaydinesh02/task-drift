@@ -1,6 +1,6 @@
 import VerticalCard from "../../components/Dashboard/VerticalCard";
 import { useTasks } from "../../contexts/Tasks";
-import { DragDropContext } from "react-beautiful-dnd";
+import { DragDropContext, DropResult } from "react-beautiful-dnd";
 import { ICurrentEditingTask, ITaskItem } from "../../types";
 import { useCallback, useState } from "react";
 import ModalComponent from "../../components/Modal";
@@ -42,6 +42,46 @@ const Dashboard = () => {
     []
   );
 
+  const handleTaskDrag = (result: DropResult) => {
+    const { source, destination } = result;
+    if (
+      !destination ||
+      (source.droppableId === destination.droppableId &&
+        source.index === destination.index)
+    )
+      return;
+
+    const sourceContainerId = source.droppableId;
+    const sourceIndex = source.index;
+    const destinationContainerId = destination.droppableId;
+    const destinationIndex = destination.index;
+
+    // Fetch the source container and task
+    const sourceContainer = containers.get(sourceContainerId);
+    const task = sourceContainer?.tasks?.[sourceIndex];
+    if (!task) {
+      console.error("Task not found!");
+      return;
+    }
+
+    // Fetch the destination container
+    const destinationContainer = containers.get(destinationContainerId);
+    if (!destinationContainer) {
+      console.error("Destination container not found!");
+      return;
+    }
+
+    // Move the task to the destination container
+    destinationContainer.tasks?.splice(destinationIndex, 0, task);
+
+    // Remove the task from the source container
+    sourceContainer.tasks?.splice(sourceIndex, 1);
+
+    // Update containers with the modified data
+    containers.set(sourceContainerId, sourceContainer);
+    containers.set(destinationContainerId, destinationContainer);
+  };
+
   return (
     <main className="pt-36 h-screen max-w-5xl mx-auto flex flex-col gap-12">
       <button
@@ -51,9 +91,7 @@ const Dashboard = () => {
         Add Container
       </button>
       <div className="min-h-[90%] grid grid-cols-3 gap-4 gap-y-8">
-        <DragDropContext
-          onDragEnd={(result) => console.log("Drag started", result)}
-        >
+        <DragDropContext onDragEnd={handleTaskDrag}>
           {[...containers.entries()].map(([key, value]) => (
             <VerticalCard
               openAddTaskModal={openAddTaskModal}
@@ -70,7 +108,7 @@ const Dashboard = () => {
         onRequestClose={
           taskModalOpen ? onRequestTaskModalClose : onRequestContainerModalClose
         }
-        contentLabel="Add container"
+        contentLabel={taskModalOpen ? "Add Task" : "Add Container"}
       >
         {addContainerModalOpen ? (
           <ContainerForm />
