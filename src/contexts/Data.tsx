@@ -146,14 +146,6 @@ const TasksProvider = ({ children }: { children: ReactNode }) => {
     setError: UseFormSetError<ContainerFormData>
   ) => {
     try {
-      if (containers.size >= 6) {
-        setError("containerName", {
-          type: "manual",
-          message: "You can only create upto 6 containers",
-        });
-        throw new Error("Container name more than 6 characters.");
-      }
-
       // Check for duplicate container name
       const isDuplicate = Array.from(containers.values()).some(
         (container) => container?.title === newTitle

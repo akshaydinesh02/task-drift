@@ -6,12 +6,11 @@ import { LoginFormSchema } from "../../validation/authSchema";
 import Google from "../../logo/Google";
 
 const LoginPage = () => {
+  const BASE_URL = import.meta.env.BASE_URL || "";
+  console.log(BASE_URL);
   const signInWithProvider = async (provider: Provider) => {
     const { error } = await auth.signInWithOAuth({
       provider: provider,
-      options: {
-        redirectTo: "http://localhost:5173/dashboard",
-      },
     });
     console.error(error);
     // Handle errors gracefully
