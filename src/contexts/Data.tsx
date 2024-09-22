@@ -139,8 +139,10 @@ const TasksProvider = ({ children }: { children: ReactNode }) => {
       if (containers.has(id)) {
         containers.delete(id);
         saveToLocalStorage(containers, user?.id || "");
+        onRequestContainerEditModalClose();
         return true;
       }
+      onRequestContainerEditModalClose();
       throw new Error("Container not found");
     } catch (error: unknown) {
       console.error("Error while deleting container", error);
@@ -275,46 +277,61 @@ const TasksProvider = ({ children }: { children: ReactNode }) => {
   );
 
   const handleTaskDrag = (result: DropResult) => {
-    const { source, destination } = result;
-    if (
-      !destination ||
-      (source.droppableId === destination.droppableId &&
-        source.index === destination.index)
-    )
-      return;
+    try {
+      const { source, destination } = result;
+      if (
+        !destination ||
+        (source.droppableId === destination.droppableId &&
+          source.index === destination.index)
+      )
+        return;
 
-    const sourceContainerId = source.droppableId;
-    const sourceIndex = source.index;
-    const destinationContainerId = destination.droppableId;
-    const destinationIndex = destination.index;
+      const sourceContainerId = source.droppableId;
+      const sourceIndex = source.index;
+      const destinationContainerId = destination.droppableId;
+      const destinationIndex = destination.index;
 
-    // Fetch the source container and task
-    const sourceContainer = containers.get(sourceContainerId);
-    const task = sourceContainer?.tasks?.[sourceIndex];
-    if (!task) {
-      console.error("Task not found!");
-      return;
+      // Fetch the source container and task
+      const sourceContainer = containers.get(sourceContainerId);
+      const task = sourceContainer?.tasks?.[sourceIndex];
+      if (!task) {
+        throw new Error("Task not found!");
+      }
+
+      // Fetch the destination container
+      const destinationContainer = containers.get(destinationContainerId);
+      if (!destinationContainer) {
+        throw new Error("Destination container not found!");
+      }
+
+      // Same container drag and drop
+      if (sourceContainerId === destinationContainerId) {
+        // Remove task from org position
+        const tasks = sourceContainer.tasks || [];
+        tasks.splice(sourceIndex, 1);
+
+        // Insert at new pos
+        tasks.splice(destinationIndex, 0, task);
+        sourceContainer.tasks = tasks;
+        containers.set(sourceContainerId, sourceContainer);
+      } else {
+        // Different container drag and drop
+        // Move the task to the destination container
+        destinationContainer.tasks?.splice(destinationIndex, 0, task);
+
+        // Remove the task from the source container
+        sourceContainer.tasks?.splice(sourceIndex, 1);
+
+        // Update containers with the modified data
+        containers.set(sourceContainerId, sourceContainer);
+        containers.set(destinationContainerId, destinationContainer);
+      }
+
+      // Write to local storage
+      saveToLocalStorage(containers, user?.id || "");
+    } catch (error: unknown) {
+      console.error("Error in handleTaskDrag", error);
     }
-
-    // Fetch the destination container
-    const destinationContainer = containers.get(destinationContainerId);
-    if (!destinationContainer) {
-      console.error("Destination container not found!");
-      return;
-    }
-
-    // Move the task to the destination container
-    destinationContainer.tasks?.splice(destinationIndex, 0, task);
-
-    // Remove the task from the source container
-    sourceContainer.tasks?.splice(sourceIndex, 1);
-
-    // Update containers with the modified data
-    containers.set(sourceContainerId, sourceContainer);
-    containers.set(destinationContainerId, destinationContainer);
-
-    // Write to local storage
-    saveToLocalStorage(containers, user?.id || "");
   };
 
   // Modal
