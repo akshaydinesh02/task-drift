@@ -42,6 +42,9 @@ const ModalComponent = (props: IModalProps) => {
         style={customStyles}
         contentLabel={contentLabel}
       >
+        <button className="text-end ml-auto w-full" onClick={onRequestClose}>
+          &#10005;
+        </button>
         {renderChildrenWithProps(children)}
       </Modal>
     </div>

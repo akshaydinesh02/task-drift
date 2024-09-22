@@ -1,12 +1,10 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { containerSchema } from "../../validation/containerSchema";
-import { ContainerFormData, IModalFormProps, TaskPriority } from "../../types";
+import { ContainerFormData } from "../../types";
 import { useData } from "../../contexts/Data";
-import { v4 as uuidv4 } from "uuid";
 
-const ContainerEditForm = (props: IModalFormProps) => {
-  const { onRequestClose } = props;
+const ContainerEditForm = () => {
   const {
     register,
     handleSubmit,
@@ -16,64 +14,29 @@ const ContainerEditForm = (props: IModalFormProps) => {
     resolver: zodResolver(containerSchema),
   });
 
-  const { containers } = useData();
-
-  const handleAddContainer = (data: ContainerFormData) => {
-    try {
-      // Only allow 6 containers at max
-      console.log(containers.size);
-      if (containers.size >= 6) {
-        setError("containerName", {
-          type: "manual",
-          message: "You can only create upto 6 containers",
-        });
-        return;
-      }
-      // Check if a container with the same name already exists
-      const isDuplicate = Array.from(containers.values()).some(
-        (container) => container?.title === data.containerName
-      );
-
-      if (isDuplicate) {
-        setError("containerName", {
-          type: "manual",
-          message: "Container name already exists",
-        });
-        return;
-      }
-
-      // New container
-      const newContainerId = uuidv4();
-      const newTaskId = uuidv4();
-      containers.set(newContainerId, {
-        id: newContainerId,
-        title: data.containerName,
-        tasks: [
-          {
-            id: newTaskId,
-            name: "Click here to edit",
-            description: "Write task description here.",
-            priority: TaskPriority.High,
-          },
-        ],
-      });
-
-      if (onRequestClose) onRequestClose();
-    } catch (error: unknown) {
-      console.log("Error while adding container", error);
-    }
-  };
+  const { updateContainer, currentData } = useData();
 
   return (
-    <form onSubmit={handleSubmit(handleAddContainer)}>
+    <form
+      onSubmit={handleSubmit((data) =>
+        updateContainer(
+          Object.keys(currentData)[0] as string,
+          data.containerName,
+          setError
+        )
+      )}
+    >
       <div className="flex flex-col justify-center gap-2 mb-4">
+        <h1 className="text-center text-3xl font-extrabold mb-4">
+          Edit Container
+        </h1>
         <label className="font-bold" htmlFor="containerName">
-          Container Name
+          New Container Name
         </label>
         <input
           id="containerName"
           {...register("containerName")}
-          placeholder="Enter container name"
+          placeholder="Enter new container name"
           className="border p-1"
         />
         {errors.containerName && (
@@ -81,12 +44,25 @@ const ContainerEditForm = (props: IModalFormProps) => {
         )}
       </div>
 
-      <button
-        className="flex items-center justify-center w-full border p-2 rounded-md bg-blue-300"
-        type="submit"
-      >
-        Submit
-      </button>
+      <div className="flex flex-col gap-4">
+        <button
+          className="flex items-center justify-center w-full border p-2 rounded-md bg-blue-300"
+          type="submit"
+        >
+          Update
+        </button>
+        <div>
+          <button
+            className="flex items-center justify-center w-full border p-2 rounded-md bg-red-600"
+            type="submit"
+          >
+            Delete
+          </button>
+          <p className="text-center text-sm italic">
+            Warning: This will delete the container!
+          </p>
+        </div>
+      </div>
     </form>
   );
 };

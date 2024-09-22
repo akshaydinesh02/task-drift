@@ -36,8 +36,17 @@ const DataContext = createContext<{
     data: ContainerFormData,
     setError: UseFormSetError<ContainerFormData>
   ) => void;
+  deleteContainer: (id: string) => boolean;
+  updateContainer: (
+    id: string,
+    newTitle: string,
+    setError: UseFormSetError<ContainerFormData>
+  ) => boolean;
   onRequestTaskModalClose: () => void;
   onRequestContainerModalClose: () => void;
+  onRequestContainerEditModalClose: () => void;
+  onRequestResetConfirmationModalClose: () => void;
+  onRequestDeleteTaskConfirmationModalClose: () => void;
 }>({
   containers: new Map(),
   resetData: () => {},
@@ -47,13 +56,24 @@ const DataContext = createContext<{
   setCurrentData: () => {},
   addTask: () => {},
   addContainer: () => {},
+  deleteContainer: () => false,
+  updateContainer: () => false,
   onRequestTaskModalClose: () => {},
   onRequestContainerModalClose: () => {},
+  onRequestContainerEditModalClose: () => {},
+  onRequestResetConfirmationModalClose: () => {},
+  onRequestDeleteTaskConfirmationModalClose: () => {},
 });
 
 const TasksProvider = ({ children }: { children: ReactNode }) => {
   const { user } = useAuth();
-  const { setTaskModalOpen, setContainerModalOpen } = useToggleContext();
+  const {
+    setTaskModalOpen,
+    setContainerModalOpen,
+    setContainerEditModalOpen,
+    setResetConfirmationModalOpen,
+    setDeleteTaskConfirmationModalOpen,
+  } = useToggleContext();
 
   const [containers, setContainers] = useState<Map<string, ITaskContainer>>(
     new Map()
@@ -69,13 +89,12 @@ const TasksProvider = ({ children }: { children: ReactNode }) => {
   ) => {
     try {
       // Only allow 6 containers at max
-      console.log(containers.size);
       if (containers.size >= 6) {
         setError("containerName", {
           type: "manual",
           message: "You can only create upto 6 containers",
         });
-        return;
+        throw new Error("Container name more than 6 characters.");
       }
       // Check for duplicate container name
       const isDuplicate = Array.from(containers.values()).some(
@@ -87,7 +106,7 @@ const TasksProvider = ({ children }: { children: ReactNode }) => {
           type: "manual",
           message: "Container name already exists",
         });
-        return;
+        throw new Error("Duplicate container name");
       }
 
       // Create new container (default task)
@@ -114,32 +133,97 @@ const TasksProvider = ({ children }: { children: ReactNode }) => {
       console.log("Error while adding container", error);
     }
   };
+
+  const deleteContainer = (id: string) => {
+    try {
+      if (containers.has(id)) {
+        containers.delete(id);
+        saveToLocalStorage(containers, user?.id || "");
+        return true;
+      }
+      throw new Error("Container not found");
+    } catch (error: unknown) {
+      console.error("Error while deleting container", error);
+      return false;
+    }
+  };
+
   const resetData = useCallback(() => {
-    console.log(containers);
-    // Clear and create new map
-    containers.clear();
-    setContainers(new Map());
-    // Remove from local storage
-    localStorage.removeItem(`containers-${user?.id}`);
+    try {
+      // Clear and create new map
+      containers.clear();
+      setContainers(new Map());
+      // Remove from local storage
+      localStorage.removeItem(`containers-${user?.id}`);
+      onRequestResetConfirmationModalClose();
+    } catch (error: unknown) {
+      console.error("Error while resetting data", error);
+    }
   }, [containers, user?.id]);
+
+  const updateContainer = (
+    id: string,
+    newTitle: string,
+    setError: UseFormSetError<ContainerFormData>
+  ) => {
+    try {
+      if (containers.size >= 6) {
+        setError("containerName", {
+          type: "manual",
+          message: "You can only create upto 6 containers",
+        });
+        throw new Error("Container name more than 6 characters.");
+      }
+
+      // Check for duplicate container name
+      const isDuplicate = Array.from(containers.values()).some(
+        (container) => container?.title === newTitle
+      );
+      if (isDuplicate) {
+        setError("containerName", {
+          type: "manual",
+          message: "Container name already exists",
+        });
+        throw new Error("Duplicate container name");
+      }
+      const container = containers.get(id);
+      if (!container) throw new Error("Container not found");
+      container.title = newTitle;
+      saveToLocalStorage(containers, user?.id || "");
+      onRequestContainerEditModalClose();
+      return true;
+    } catch (error: unknown) {
+      console.error("Error while updating container", error);
+      return false;
+    }
+  };
 
   // Tasks
   const deleteTask = (taskId: string, containerId: string) => {
-    // Get container
-    const container = containers.get(containerId);
-    // Container | tasks undefined guard clause
-    if (!container || !container.tasks) return;
-    // Get task
-    const taskIndex = container.tasks.findIndex((task) => task.id === taskId); // O(n)
-    // Task undefined guard clause
-    if (taskIndex === -1) return;
-    // Remove task
-    container.tasks.splice(taskIndex, 1);
-    // Update Map
-    containers.set(containerId, container);
+    try {
+      // Get container
+      const newContainers = new Map(containers);
+      const container = newContainers.get(containerId);
+      // Container | tasks undefined guard clause
+      if (!container || !container.tasks)
+        throw new Error("Container or tasks array not found");
+      // Get task
+      const taskIndex = container.tasks.findIndex((task) => task.id === taskId); // O(n)
+      // Task undefined guard clause
+      if (taskIndex === -1) throw new Error("Task array not found");
+      // Remove task
+      container.tasks.splice(taskIndex, 1);
+      // Update Map
+      setContainers(newContainers);
 
-    // Write to local storage
-    saveToLocalStorage(containers, user?.id || "");
+      // Write to local storage
+      saveToLocalStorage(containers, user?.id || "");
+
+      // Close modal
+      onRequestDeleteTaskConfirmationModalClose();
+    } catch (error: unknown) {
+      console.error("Error while deleting task", error);
+    }
   };
 
   const addTask = useCallback(
@@ -173,9 +257,6 @@ const TasksProvider = ({ children }: { children: ReactNode }) => {
             container.tasks![taskIndex] = newTask;
           }
         } else {
-          // Add New task
-          console.log("Else block", data);
-
           // Add new task
           container.tasks = container.tasks
             ? [...container.tasks, newTask]
@@ -192,16 +273,6 @@ const TasksProvider = ({ children }: { children: ReactNode }) => {
     },
     [containers, currentData, user?.id]
   );
-
-  const onRequestTaskModalClose = useCallback(() => {
-    setTaskModalOpen(false);
-    setCurrentData({ "": null });
-  }, []);
-
-  const onRequestContainerModalClose = useCallback(() => {
-    setContainerModalOpen(false);
-    setCurrentData({ "": null });
-  }, []);
 
   const handleTaskDrag = (result: DropResult) => {
     const { source, destination } = result;
@@ -246,6 +317,32 @@ const TasksProvider = ({ children }: { children: ReactNode }) => {
     saveToLocalStorage(containers, user?.id || "");
   };
 
+  // Modal
+  const onRequestTaskModalClose = useCallback(() => {
+    setTaskModalOpen(false);
+    setCurrentData({ "": null });
+  }, []);
+
+  const onRequestContainerModalClose = useCallback(() => {
+    setContainerModalOpen(false);
+    setCurrentData({ "": null });
+  }, []);
+
+  const onRequestContainerEditModalClose = useCallback(() => {
+    setContainerEditModalOpen(false);
+    setCurrentData({ "": null });
+  }, []);
+
+  const onRequestResetConfirmationModalClose = useCallback(() => {
+    setResetConfirmationModalOpen(false);
+    setCurrentData({ "": null });
+  }, []);
+
+  const onRequestDeleteTaskConfirmationModalClose = useCallback(() => {
+    setDeleteTaskConfirmationModalOpen(false);
+    setCurrentData({ "": null });
+  }, []);
+
   useEffect(() => {
     const localContainers: Map<string, ITaskContainer> | null | undefined =
       fetchDataFromLocalStorage(user?.id || "");
@@ -263,8 +360,13 @@ const TasksProvider = ({ children }: { children: ReactNode }) => {
     setCurrentData,
     addTask,
     addContainer,
+    deleteContainer,
+    updateContainer,
     onRequestTaskModalClose,
     onRequestContainerModalClose,
+    onRequestContainerEditModalClose,
+    onRequestResetConfirmationModalClose,
+    onRequestDeleteTaskConfirmationModalClose,
   };
 
   return <DataContext.Provider value={value}>{children}</DataContext.Provider>;

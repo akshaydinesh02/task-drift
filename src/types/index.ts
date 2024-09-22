@@ -70,4 +70,8 @@ export interface IToggleContext {
   setContainerModalOpen: Dispatch<SetStateAction<boolean>>;
   taskModalOpen: boolean;
   setTaskModalOpen: Dispatch<SetStateAction<boolean>>;
+  resetConfirmationModalOpen: boolean;
+  setResetConfirmationModalOpen: Dispatch<SetStateAction<boolean>>;
+  deleteTaskConfirmationModalOpen: boolean;
+  setDeleteTaskConfirmationModalOpen: Dispatch<SetStateAction<boolean>>;
 }

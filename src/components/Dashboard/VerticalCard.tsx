@@ -1,23 +1,23 @@
 import { priorityColors } from "../../constants/colors";
 import { Draggable, Droppable } from "@hello-pangea/dnd";
-import { ITaskContainer, ITaskItem, IVerticalCardProps } from "../../types";
-import { removeTaskFromContainer } from "../../utils/dataManipulation";
 import { useData } from "../../contexts/Data";
-import { saveToLocalStorage } from "../../utils/localstorage";
-import { useAuth } from "../../contexts/Auth";
 import { useToggleContext } from "../../contexts/Toggle";
+import { ITaskItem, IVerticalCardProps } from "../../types";
 
 const VerticalCard = (props: IVerticalCardProps) => {
   const { name, tasks, containerId } = props;
-  const { containers, setCurrentData } = useData();
-  const { user } = useAuth();
-  const { setTaskModalOpen } = useToggleContext();
+  const { setCurrentData } = useData();
+  const {
+    setTaskModalOpen,
+    setContainerEditModalOpen,
+    setDeleteTaskConfirmationModalOpen,
+  } = useToggleContext();
 
-  const onClickContainerEdit = (containerId: string) => {
-    console.log("On click container edit button", containerId);
+  const onClickContainerEdit = () => {
+    setContainerEditModalOpen(true);
+    setCurrentData({ [containerId]: null });
   };
   const onTaskEdit = (task: ITaskItem) => {
-    console.log(containerId);
     setCurrentData({ [containerId]: task });
     setTaskModalOpen(true);
   };
@@ -27,12 +27,17 @@ const VerticalCard = (props: IVerticalCardProps) => {
     setTaskModalOpen(true);
   };
 
+  const onTaskDelete = (task: ITaskItem) => {
+    setCurrentData({ [containerId]: task });
+    setDeleteTaskConfirmationModalOpen(true);
+  };
+
   return (
     <section className="bg-gray-300 w-full rounded-md h-[90%] overflow-y-scroll pb-8">
       <div className="flex items-center justify-between w-full sticky top-0 backdrop-blur-xl">
         <div className="text-start font-extrabold text-gray-600 capitalize px-4 py-2 flex items-center gap-2">
           <button
-            onClick={() => onClickContainerEdit(containerId)}
+            onClick={() => onClickContainerEdit()}
             className="text-md border w-4 h-4 flex justify-center items-center rounded-full p-4 bg-gray-600 border-gray-500 text-gray-100"
           >
             &#9998;
@@ -72,16 +77,8 @@ const VerticalCard = (props: IVerticalCardProps) => {
                     <button
                       onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                         e.stopPropagation();
-                        const updatedContainers = removeTaskFromContainer(
-                          containers,
-                          containerId,
-                          task.id
-                        );
-                        saveToLocalStorage(
-                          updatedContainers as Map<string, ITaskContainer>,
-                          user?.id || ""
-                        );
-                        console.log(containers);
+                        setCurrentData({ containerId: task });
+                        onTaskDelete(task);
                       }}
                       className="flex items-center justify-center w-[10%]"
                     >

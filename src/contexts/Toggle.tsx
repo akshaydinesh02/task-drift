@@ -8,6 +8,10 @@ const ToggleContextInitialValues = {
   setContainerModalOpen: () => {},
   taskModalOpen: false,
   setTaskModalOpen: () => {},
+  resetConfirmationModalOpen: false,
+  setResetConfirmationModalOpen: () => {},
+  deleteTaskConfirmationModalOpen: false,
+  setDeleteTaskConfirmationModalOpen: () => {},
 };
 
 const ToggleContext = createContext<IToggleContext>(ToggleContextInitialValues);
@@ -17,6 +21,10 @@ const ToggleContextProvider = ({ children }: { children: ReactNode }) => {
     useState<boolean>(false);
   const [containerModalOpen, setContainerModalOpen] = useState<boolean>(false);
   const [taskModalOpen, setTaskModalOpen] = useState<boolean>(false);
+  const [resetConfirmationModalOpen, setResetConfirmationModalOpen] =
+    useState<boolean>(false);
+  const [deleteTaskConfirmationModalOpen, setDeleteTaskConfirmationModalOpen] =
+    useState<boolean>(false);
 
   const value = {
     containerEditModalOpen,
@@ -25,6 +33,10 @@ const ToggleContextProvider = ({ children }: { children: ReactNode }) => {
     setContainerModalOpen,
     taskModalOpen,
     setTaskModalOpen,
+    resetConfirmationModalOpen,
+    setResetConfirmationModalOpen,
+    deleteTaskConfirmationModalOpen,
+    setDeleteTaskConfirmationModalOpen,
   };
 
   return (

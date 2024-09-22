@@ -1,21 +1,27 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../contexts/Auth";
-import UserHeader from "./UserHeader";
 
 const Header = () => {
-  const signOut = useAuth().signOut;
-  const user = useAuth().user;
+  const { user, signOut } = useAuth();
   const navigate = useNavigate();
-  const path = useLocation().pathname;
+  const { pathname } = useLocation();
 
   return (
     <div className="fixed w-full">
       <div className="py-2 px-12 border-b bg-gray-50 border-b border-gray-400">
         <div className="max-w-5xl mx-auto flex justify-between">
-          <h1 className="text-xl font-extrabold">Task Drift &#10004;</h1>
+          <button
+            className="text-xl font-extrabold"
+            onClick={() => {
+              if (user) return;
+              navigate("/");
+            }}
+          >
+            Task Drift &#10004;
+          </button>
           {user ? (
             <button
-              disabled={path === "/auth/sign-up"}
+              disabled={pathname === "/auth/sign-up"}
               onClick={() => {
                 console.log("signout");
                 signOut();
@@ -26,7 +32,7 @@ const Header = () => {
             </button>
           ) : (
             <button
-              disabled={path === "/auth/sign-in"}
+              disabled={pathname === "/auth/sign-in"}
               onClick={() => navigate("/auth/sign-in")}
               className="font-semibold disabled:strikethrough"
             >
@@ -35,8 +41,6 @@ const Header = () => {
           )}
         </div>
       </div>
-
-      <UserHeader />
     </div>
   );
 };

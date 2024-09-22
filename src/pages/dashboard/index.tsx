@@ -1,43 +1,28 @@
 import VerticalCard from "../../components/Dashboard/VerticalCard";
 import { useData } from "../../contexts/Data";
-import { DragDropContext, DropResult } from "@hello-pangea/dnd";
-import { ICurrentEditingTask, ITaskItem } from "../../types";
-import { useCallback, useState } from "react";
-import ModalComponent from "../../components/Modal";
+import { DragDropContext } from "@hello-pangea/dnd";
 import Modal from "react-modal";
-import ContainerForm from "../../components/Form/ContainerForm";
-import TaskForm from "../../components/Form/TaskForm";
-import { saveToLocalStorage } from "../../utils/localstorage";
-import { useAuth } from "../../contexts/Auth";
 import { useToggleContext } from "../../contexts/Toggle";
 import TaskModal from "../../components/Modal/TaskModal";
 import ContainerModal from "../../components/Modal/ContainerModal";
+import ContainerEditModal from "../../components/Modal/ContainerEditModal";
+import ResetConfirmationModal from "../../components/Modal/ResetConfirmationModal";
 
 Modal.setAppElement("#root");
 
 const Dashboard = () => {
-  const { containers, resetData, handleTaskDrag } = useData();
+  const { containers, handleTaskDrag } = useData();
 
-  const {
-    containerModalOpen,
-    setContainerModalOpen,
-    taskModalOpen,
-    setTaskModalOpen,
-  } = useToggleContext();
-
-  const openAddTaskModal = useCallback(
-    (containerId: string, task?: ITaskItem) => {
-      setTaskModalOpen(true);
-    },
-    []
-  );
+  const { setContainerModalOpen, setResetConfirmationModalOpen } =
+    useToggleContext();
 
   return (
-    <main className="pt-36 h-screen max-w-5xl mx-auto flex flex-col gap-12">
+    <main className="pt-16 h-screen max-w-5xl mx-auto flex flex-col gap-12">
       <div className="self-end flex gap-4">
         <button
-          onClick={resetData}
-          className="border font-bold bg-blue-300 p-2 rounded-md"
+          disabled={containers.size <= 0}
+          onClick={() => setResetConfirmationModalOpen(true)}
+          className="border font-bold bg-blue-300 p-2 rounded-md disabled:bg-gray-400"
         >
           Reset
         </button>
@@ -61,28 +46,11 @@ const Dashboard = () => {
         </DragDropContext>
         <TaskModal />
         <ContainerModal />
+        <ContainerEditModal />
+        <ResetConfirmationModal />
       </div>
     </main>
   );
 };
 
 export default Dashboard;
-{
-  /* <ModalComponent
-isOpen={taskModalOpen || containerModalOpen || containerEditModalOpen}
-onRequestClose={
-  taskModalOpen ? onRequestTaskModalClose : onRequestContainerModalClose
-}
-contentLabel={taskModalOpen ? "Add Task" : "Add Container"}
->
-{containerModalOpen ? <ContainerForm /> : <></>}
-{taskModalOpen ? (
-  <TaskForm
-    currentEditingTask={currentEditingTask}
-    newTaskContainerId={newTaskContainerId}
-  />
-) : (
-  <></>
-)}
-</ModalComponent> */
-}

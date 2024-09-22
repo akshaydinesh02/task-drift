@@ -3,11 +3,10 @@ import Providers from "../../../Providers";
 import ErrorPage from "../error";
 import NotFoundPage from "../error/NotFoundPage";
 import Home from "../home";
-import NavigateToHomeRoute from "./NavigateToHomeRoute";
+import NavigateToDashboardRoute from "./NavigateToDashboardRoute";
 import SignInPage from "../auth/LoginPage";
 import SignUpPage from "../auth/SignUpPage";
 import AuthProtectedRoute from "./AuthProtectedRoute";
-import TaskList from "../../components/TaskList";
 import Dashboard from "../dashboard";
 
 const router = createBrowserRouter([
@@ -18,51 +17,28 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/",
-        element: <Home />,
+        element: <NavigateToDashboardRoute />,
+        errorElement: <ErrorPage />,
+        children: [{ path: "/", element: <Home /> }],
       },
       {
-        path: "/",
-        element: <NavigateToHomeRoute />,
-        children: [
-          {
-            path: "/auth/sign-in",
-            element: <SignInPage />,
-          },
-        ],
+        path: "/auth/sign-in",
+        element: <NavigateToDashboardRoute />,
+        errorElement: <ErrorPage />,
+        children: [{ path: "/auth/sign-in", element: <SignInPage /> }],
       },
       {
-        path: "/",
-        element: <NavigateToHomeRoute />,
-        children: [
-          {
-            path: "/auth/sign-up",
-            element: <SignUpPage />,
-          },
-        ],
+        path: "/auth/sign-up",
+        element: <NavigateToDashboardRoute />,
+        errorElement: <ErrorPage />,
+        children: [{ path: "/auth/sign-up", element: <SignUpPage /> }],
       },
-
-      // Protected routes
       {
-        path: "/",
+        path: "/dashboard",
         element: <AuthProtectedRoute />,
-        children: [
-          {
-            path: "/dashboard",
-            element: <Dashboard />,
-          },
-        ],
+        errorElement: <ErrorPage />,
+        children: [{ path: "/dashboard", element: <Dashboard /> }],
       },
-      {
-        path: "/",
-        element: <AuthProtectedRoute />,
-        children: [
-          {
-            path: "/tasks",
-            element: <TaskList />,
-          },
-        ],
-      },
-
       {
         path: "*",
         element: <NotFoundPage />,
