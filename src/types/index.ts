@@ -1,9 +1,10 @@
-// import { Dispatch, SetStateAction } from "react";
 import { Dispatch, ReactNode, SetStateAction } from "react";
 import { Styles } from "react-modal";
 import { z } from "zod";
 import { containerSchema } from "../validation/containerSchema";
 import { taskSchema } from "../validation/taskSchema";
+import { DropResult } from "@hello-pangea/dnd";
+import { UseFormSetError } from "react-hook-form";
 
 export enum TaskPriority {
   Low = "low",
@@ -74,4 +75,37 @@ export interface IToggleContext {
   setResetConfirmationModalOpen: Dispatch<SetStateAction<boolean>>;
   deleteTaskConfirmationModalOpen: boolean;
   setDeleteTaskConfirmationModalOpen: Dispatch<SetStateAction<boolean>>;
+}
+
+export interface IDataContext {
+  containers: Map<string, ITaskContainer>;
+  resetData: () => void;
+  deleteTask: (taskId: string, containerId: string) => void;
+  handleTaskDrag: (result: DropResult) => void;
+  currentData: { [key: string]: ITaskItem | null };
+  setCurrentData: Dispatch<SetStateAction<{ [key: string]: ITaskItem | null }>>;
+  addTask: (data: TaskFormData) => void;
+  addContainer: (
+    data: ContainerFormData,
+    setError: UseFormSetError<ContainerFormData>
+  ) => void;
+  deleteContainer: (id: string) => boolean;
+  updateContainer: (
+    id: string,
+    newTitle: string,
+    setError: UseFormSetError<ContainerFormData>
+  ) => boolean;
+  onRequestTaskModalClose: () => void;
+  onRequestContainerModalClose: () => void;
+  onRequestContainerEditModalClose: () => void;
+  onRequestResetConfirmationModalClose: () => void;
+  onRequestDeleteTaskConfirmationModalClose: () => void;
+}
+
+export interface IFeatureProps {
+  id: string;
+  header: string;
+  description: string;
+  image: string;
+  isReversed: boolean;
 }

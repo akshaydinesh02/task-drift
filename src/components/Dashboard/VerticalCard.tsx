@@ -33,16 +33,16 @@ const VerticalCard = (props: IVerticalCardProps) => {
   };
 
   return (
-    <section className="bg-gray-300 w-full rounded-md h-[90%] overflow-y-scroll pb-8">
+    <section className="bg-gray-300 w-full rounded-md h-[90%] overflow-y-scroll pb-8 shadow-xl">
       <div className="flex items-center justify-between w-full sticky top-0 backdrop-blur-xl">
-        <div className="text-start font-extrabold text-gray-600 capitalize px-4 py-2 flex items-center gap-2">
+        <div className="text-start text-gray-600 capitalize px-4 py-2 flex items-center gap-2">
           <button
             onClick={() => onClickContainerEdit()}
-            className="text-md border w-4 h-4 flex justify-center items-center rounded-full p-4 bg-gray-600 border-gray-500 text-gray-100"
+            className="shadow-xl text-md border w-4 h-4 flex justify-center items-center rounded-full p-4 bg-gray-600 border-gray-500 text-gray-100"
           >
             &#9998;
           </button>
-          <p>{name}</p>
+          <p className="font-bold text-center">{name}</p>
         </div>
         <button onClick={() => onTaskAdd()} className="text-xl px-4 py-2">
           &#43;
@@ -64,7 +64,7 @@ const VerticalCard = (props: IVerticalCardProps) => {
                     {...provided.dragHandleProps}
                     {...provided.draggableProps}
                     ref={provided.innerRef}
-                    className="p-2 flex flex bg-white rounded-md justify-start gap-4 items-center w-full"
+                    className="overflow-hidden shadow-xl p-2 flex flex bg-white rounded-md justify-start gap-4 items-center w-full"
                   >
                     <p
                       className={`p-2 h-6 w-6 rounded-full ${priorityColors.get(
@@ -73,7 +73,9 @@ const VerticalCard = (props: IVerticalCardProps) => {
                     >
                       &nbsp;
                     </p>
-                    <p className="w-[90%]">{task.name}</p>
+                    <p className="truncate overflow-hidden text-ellipsis whitespace-nowrap w-[90%]">
+                      {task.name}
+                    </p>
                     <button
                       onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                         e.stopPropagation();

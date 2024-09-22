@@ -8,6 +8,7 @@ import {
 } from "react";
 import {
   ContainerFormData,
+  IDataContext,
   ITaskContainer,
   ITaskItem,
   TaskFormData,
@@ -19,35 +20,11 @@ import {
 } from "../utils/localstorage";
 import { useAuth } from "./Auth";
 import { DropResult } from "@hello-pangea/dnd";
-import { Dispatch, SetStateAction } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { useToggleContext } from "./Toggle";
 import { UseFormSetError } from "react-hook-form";
 
-const DataContext = createContext<{
-  containers: Map<string, ITaskContainer>;
-  resetData: () => void;
-  deleteTask: (taskId: string, containerId: string) => void;
-  handleTaskDrag: (result: DropResult) => void;
-  currentData: { [key: string]: ITaskItem | null };
-  setCurrentData: Dispatch<SetStateAction<{ [key: string]: ITaskItem | null }>>;
-  addTask: (data: TaskFormData) => void;
-  addContainer: (
-    data: ContainerFormData,
-    setError: UseFormSetError<ContainerFormData>
-  ) => void;
-  deleteContainer: (id: string) => boolean;
-  updateContainer: (
-    id: string,
-    newTitle: string,
-    setError: UseFormSetError<ContainerFormData>
-  ) => boolean;
-  onRequestTaskModalClose: () => void;
-  onRequestContainerModalClose: () => void;
-  onRequestContainerEditModalClose: () => void;
-  onRequestResetConfirmationModalClose: () => void;
-  onRequestDeleteTaskConfirmationModalClose: () => void;
-}>({
+const DataContext = createContext<IDataContext>({
   containers: new Map(),
   resetData: () => {},
   deleteTask: () => {},
@@ -130,7 +107,7 @@ const TasksProvider = ({ children }: { children: ReactNode }) => {
       // Close modal
       onRequestContainerModalClose();
     } catch (error: unknown) {
-      console.log("Error while adding container", error);
+      console.error("Error while adding container", error);
     }
   };
 

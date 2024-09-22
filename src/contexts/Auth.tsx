@@ -21,7 +21,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const signOut = async () => {
     const { error } = await auth.signOut();
-    console.log("error: ", error);
+    console.error("error: ", error);
     if (!error) {
       setUser(null);
       setSession(null);

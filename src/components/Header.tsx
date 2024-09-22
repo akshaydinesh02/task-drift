@@ -8,7 +8,7 @@ const Header = () => {
 
   return (
     <div className="fixed w-full">
-      <div className="py-2 px-12 border-b bg-gray-50 border-b border-gray-400">
+      <div className="py-2 px-4 md:px-12 h-12 border-b bg-gray-200 border-gray-200">
         <div className="max-w-5xl mx-auto flex justify-between">
           <button
             className="text-xl font-extrabold"
@@ -23,7 +23,6 @@ const Header = () => {
             <button
               disabled={pathname === "/auth/sign-up"}
               onClick={() => {
-                console.log("signout");
                 signOut();
               }}
               className="font-semibold"

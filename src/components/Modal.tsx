@@ -10,8 +10,22 @@ const customStyles = {
     bottom: "auto",
     marginRight: "-50%",
     transform: "translate(-50%, -50%)",
-    width: "30%",
     borderRadius: "12px",
+    width: "90%",
+    maxWidth: "500px",
+
+    "@media(min-width: 640px)": {
+      width: "80%", // Tablets (sm)
+    },
+    "@media(min-width: 768px)": {
+      width: "60%", // Tablets and small laptops (md)
+    },
+    "@media(min-width: 1024px)": {
+      width: "40%", // Laptops and desktops (lg)
+    },
+    "@media(min-width: 1280px)": {
+      width: "30%", // Larger screens (xl)
+    },
   },
   overlay: {
     backgroundColor: "rgba(0, 0, 0, 0.5)",

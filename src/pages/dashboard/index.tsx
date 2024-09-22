@@ -17,23 +17,24 @@ const Dashboard = () => {
     useToggleContext();
 
   return (
-    <main className="pt-16 h-screen max-w-5xl mx-auto flex flex-col gap-12">
+    <main className="pt-16 lg:pt-24 h-screen max-w-sm md:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto flex flex-col gap-6 lg:gap-12">
       <div className="self-end flex gap-4">
         <button
           disabled={containers.size <= 0}
           onClick={() => setResetConfirmationModalOpen(true)}
-          className="border font-bold bg-blue-300 p-2 rounded-md disabled:bg-gray-400"
+          className="border font-bold bg-blue-300 p-4 flex justify-center items-center w-4 h-4 rounded-full disabled:bg-gray-400 shadow-xl"
         >
-          Reset
+          &#8635;
         </button>
         <button
+          disabled={containers.size >= 6}
           onClick={() => setContainerModalOpen(true)}
-          className="border font-bold bg-blue-300 p-2 rounded-md"
+          className="border font-bold bg-blue-300 p-4 flex justify-center items-center w-4 h-4 rounded-full disabled:bg-gray-400 shadow-xl"
         >
-          Add Container
+          &#43;
         </button>
       </div>
-      <div className="min-h-[90%] grid grid-cols-3 gap-4 gap-y-8">
+      <div className="md:min-h-[90%] grid md:grid-cols-3 gap-4 gap-y-8">
         <DragDropContext onDragEnd={handleTaskDrag}>
           {[...containers.entries()].map(([key, value]) => (
             <VerticalCard

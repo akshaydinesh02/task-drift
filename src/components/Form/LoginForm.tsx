@@ -17,7 +17,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
   });
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="w-full">
+    <form onSubmit={handleSubmit(onSubmit)} className="w-full font-bold">
       <Input
         label="Email"
         type="email"
