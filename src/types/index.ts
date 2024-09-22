@@ -1,5 +1,5 @@
 // import { Dispatch, SetStateAction } from "react";
-import { ReactNode } from "react";
+import { Dispatch, ReactNode, SetStateAction } from "react";
 import { Styles } from "react-modal";
 import { z } from "zod";
 import { containerSchema } from "../validation/containerSchema";
@@ -54,10 +54,20 @@ export interface IModalFormProps {
   onRequestClose?: () => void;
 }
 
-export interface ITaskForm extends IModalFormProps {
-  currentEditingTask?: ICurrentEditingTask | null;
-  newTaskContainerId?: string | null;
+export interface IVerticalCardProps {
+  name: string;
+  containerId: string;
+  tasks?: ITaskItem[] | null;
 }
 
 export type ContainerFormData = z.infer<typeof containerSchema>;
 export type TaskFormData = z.infer<typeof taskSchema>;
+
+export interface IToggleContext {
+  containerEditModalOpen: boolean;
+  setContainerEditModalOpen: Dispatch<SetStateAction<boolean>>;
+  containerModalOpen: boolean;
+  setContainerModalOpen: Dispatch<SetStateAction<boolean>>;
+  taskModalOpen: boolean;
+  setTaskModalOpen: Dispatch<SetStateAction<boolean>>;
+}

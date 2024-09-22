@@ -1,12 +1,10 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { containerSchema } from "../../validation/containerSchema";
-import { ContainerFormData, IModalFormProps, TaskPriority } from "../../types";
-import { useTasks } from "../../contexts/Tasks";
-import { v4 as uuidv4 } from "uuid";
+import { ContainerFormData } from "../../types";
+import { useData } from "../../contexts/Data";
 
-const ContainerForm = (props: IModalFormProps) => {
-  const { onRequestClose } = props;
+const ContainerForm = () => {
   const {
     register,
     handleSubmit,
@@ -16,56 +14,10 @@ const ContainerForm = (props: IModalFormProps) => {
     resolver: zodResolver(containerSchema),
   });
 
-  const { containers } = useTasks();
-
-  const handleAddContainer = (data: ContainerFormData) => {
-    try {
-      // Only allow 6 containers at max
-      console.log(containers.size);
-      if (containers.size >= 6) {
-        setError("containerName", {
-          type: "manual",
-          message: "You can only create upto 6 containers",
-        });
-        return;
-      }
-      // Check for duplicate container name
-      const isDuplicate = Array.from(containers.values()).some(
-        (container) => container?.title === data.containerName
-      );
-
-      if (isDuplicate) {
-        setError("containerName", {
-          type: "manual",
-          message: "Container name already exists",
-        });
-        return;
-      }
-
-      // Create new container (default task)
-      const newContainerId = uuidv4();
-      const newTaskId = uuidv4();
-      containers.set(newContainerId, {
-        id: newContainerId,
-        title: data.containerName,
-        tasks: [
-          {
-            id: newTaskId,
-            name: "Click here to edit",
-            description: "Write task description here.",
-            priority: TaskPriority.High,
-          },
-        ],
-      });
-
-      if (onRequestClose) onRequestClose();
-    } catch (error: unknown) {
-      console.log("Error while adding container", error);
-    }
-  };
+  const { addContainer } = useData();
 
   return (
-    <form onSubmit={handleSubmit(handleAddContainer)}>
+    <form onSubmit={handleSubmit((data) => addContainer(data, setError))}>
       <div className="flex flex-col justify-center gap-2 mb-4">
         <h1 className="text-center text-3xl font-extrabold mb-4">
           Add Container

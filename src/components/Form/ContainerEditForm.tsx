@@ -1,12 +1,8 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { containerSchema } from "../../validation/containerSchema";
-import {
-  ContainerEditFormData,
-  IModalFormProps,
-  TaskPriority,
-} from "../../types";
-import { useTasks } from "../../contexts/Tasks";
+import { ContainerFormData, IModalFormProps, TaskPriority } from "../../types";
+import { useData } from "../../contexts/Data";
 import { v4 as uuidv4 } from "uuid";
 
 const ContainerEditForm = (props: IModalFormProps) => {
@@ -16,13 +12,13 @@ const ContainerEditForm = (props: IModalFormProps) => {
     handleSubmit,
     formState: { errors },
     setError,
-  } = useForm<ContainerEditFormData>({
+  } = useForm<ContainerFormData>({
     resolver: zodResolver(containerSchema),
   });
 
-  const { containers } = useTasks();
+  const { containers } = useData();
 
-  const handleAddContainer = (data: ContainerEditFormData) => {
+  const handleAddContainer = (data: ContainerFormData) => {
     try {
       // Only allow 6 containers at max
       console.log(containers.size);
