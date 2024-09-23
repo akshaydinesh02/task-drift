@@ -1,21 +1,26 @@
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { LoginFormSchema, loginSchema } from "../../validation/authSchema";
+import {
+  FieldErrors,
+  UseFormHandleSubmit,
+  UseFormRegister,
+  UseFormSetError,
+} from "react-hook-form";
+import { LoginFormSchema } from "../../validation/authSchema";
 import Input from "./Input";
 
 interface LoginFormProps {
   onSubmit: (data: LoginFormSchema) => void;
+  register: UseFormRegister<LoginFormSchema>;
+  handleSubmit: UseFormHandleSubmit<LoginFormSchema>;
+  errors: FieldErrors<LoginFormSchema>;
+  setError: UseFormSetError<LoginFormSchema>;
 }
 
-const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<LoginFormSchema>({
-    resolver: zodResolver(loginSchema),
-  });
-
+const LoginForm: React.FC<LoginFormProps> = ({
+  onSubmit,
+  register,
+  handleSubmit,
+  errors,
+}) => {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="w-full font-bold">
       <Input
@@ -36,6 +41,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
       >
         Login
       </button>
+      <p className="mt-2 text-red-500">{errors.root?.message}</p>
     </form>
   );
 };
