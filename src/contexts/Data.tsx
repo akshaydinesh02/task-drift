@@ -12,7 +12,6 @@ import {
   ITaskContainer,
   ITaskItem,
   TaskFormData,
-  TaskPriority,
 } from "../types";
 import {
   fetchDataFromLocalStorage,
@@ -88,18 +87,10 @@ const TasksProvider = ({ children }: { children: ReactNode }) => {
 
       // Create new container (default task)
       const newContainerId = uuidv4();
-      const newTaskId = uuidv4();
       containers.set(newContainerId, {
         id: newContainerId,
         title: data.containerName,
-        tasks: [
-          {
-            id: newTaskId,
-            name: "Click here to edit",
-            description: "Write task description here.",
-            priority: TaskPriority.High,
-          },
-        ],
+        tasks: [],
       });
 
       // Write to local storage

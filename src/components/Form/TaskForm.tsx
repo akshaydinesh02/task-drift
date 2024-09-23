@@ -31,7 +31,7 @@ const TaskForm = () => {
   return (
     <form onSubmit={handleSubmit(addTask)}>
       <div className="flex flex-col justify-center gap-2 mb-4">
-        <h1 className="text-center text-3xl font-extrabold">
+        <h1 className="text-center text-3xl font-medium">
           {existingTask ? "Edit Task" : "Add Task"}
         </h1>
         <label className="font-bold" htmlFor="name">
@@ -74,7 +74,7 @@ const TaskForm = () => {
         )}
       </div>
       <button
-        className="flex items-center justify-center w-full border p-2 rounded-md bg-blue-300"
+        className="flex items-center font-bold justify-center w-full border p-2 rounded-md bg-blue-300"
         type="submit"
       >
         {existingTask ? "Save" : "Add"}

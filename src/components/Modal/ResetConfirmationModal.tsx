@@ -32,8 +32,13 @@ const ConfirmationModal = () => {
         header={resetConfirmationModalOpen ? "Reset Data" : "Delete Task"}
         warning={
           resetConfirmationModalOpen
-            ? "Warning: This will delete all data!!!"
-            : "Warning: This will delete the task!!!"
+            ? "Warning: This action cannot be reversed!"
+            : "Warning: This action cannot be reversed!"
+        }
+        subHeader={
+          resetConfirmationModalOpen
+            ? "Are you sure you want to reset all data?"
+            : "Are you sure you want to delete this task?"
         }
         proceedClickHandler={() => {
           const deleteTaskContainerId = Object.keys(currentData)[0];

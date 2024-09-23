@@ -34,7 +34,7 @@ const ContainerEditForm = () => {
         )}
       >
         <div className="flex flex-col justify-center gap-2 mb-4">
-          <h1 className="text-center text-3xl font-extrabold mb-4">
+          <h1 className="text-center text-3xl font-medium mb-4">
             Edit Container
           </h1>
           <label className="font-bold" htmlFor="containerName">
@@ -51,7 +51,7 @@ const ContainerEditForm = () => {
           )}
         </div>
 
-        <div className="flex flex-col gap-4">
+        <div className="flex font-bold flex-col gap-4">
           <button
             className="flex items-center justify-center w-full border p-2 rounded-md bg-blue-300"
             type="submit"
@@ -61,10 +61,13 @@ const ContainerEditForm = () => {
         </div>
       </form>
       <div>
-        <h1 className="text-center text-3xl font-extrabold mb-4">
+        <h1 className="text-center text-3xl font-medium mb-4">
           Delete Container
         </h1>
-        <div className="flex gap-4">
+        <p className="text-center mb-2">
+          Are you sure you want to delete the container?
+        </p>
+        <div className="flex gap-4 font-bold">
           <button
             onClick={onRequestContainerEditModalClose}
             className="flex items-center justify-center w-full border p-2 rounded-md bg-gray-300"
@@ -82,8 +85,8 @@ const ContainerEditForm = () => {
             Yes
           </button>
         </div>
-        <p className="text-center text-sm italic text-red-700 font-bold">
-          Warning: This will delete the container!
+        <p className="text-center text-sm text-red-700 font-medium mt-2">
+          Warning: This action cannot be reversed!
         </p>
       </div>
     </div>

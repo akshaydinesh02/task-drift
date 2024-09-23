@@ -18,21 +18,32 @@ const Dashboard = () => {
 
   return (
     <main className="pt-16 lg:pt-24 h-screen max-w-sm md:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto flex flex-col gap-6 lg:gap-12">
-      <div className="self-end flex gap-4">
-        <button
-          disabled={containers.size <= 0}
-          onClick={() => setResetConfirmationModalOpen(true)}
-          className="border font-bold bg-blue-300 p-4 flex justify-center items-center w-4 h-4 rounded-full disabled:bg-gray-400 shadow-xl"
-        >
-          &#8635;
-        </button>
-        <button
-          disabled={containers.size >= 6}
-          onClick={() => setContainerModalOpen(true)}
-          className="border font-bold bg-blue-300 p-4 flex justify-center items-center w-4 h-4 rounded-full disabled:bg-gray-400 shadow-xl"
-        >
-          &#43;
-        </button>
+      <div className="w-full flex flex-col">
+        <div className="flex self-end gap-4">
+          <button
+            disabled={containers.size <= 0}
+            onClick={() => setResetConfirmationModalOpen(true)}
+            className="border font-bold bg-red-600 p-4 flex justify-center items-center w-4 h-4 rounded-full disabled:bg-gray-400 shadow-xl"
+          >
+            &#8635;
+          </button>
+          <button
+            disabled={containers.size >= 6}
+            onClick={() => setContainerModalOpen(true)}
+            className="border font-bold bg-blue-300 p-4 flex justify-center items-center w-4 h-4 rounded-full disabled:bg-gray-400 shadow-xl"
+          >
+            &#43;
+          </button>
+        </div>
+
+        {!containers.size ? (
+          <div className="text-center self-center mt-12 border p-4 rounded-md bg-gray-200 font-bold">
+            Click on the <span className="">&#34;&#43;&#34;</span> button to
+            start adding containers!
+          </div>
+        ) : (
+          <></>
+        )}
       </div>
       <div className="md:min-h-[90%] grid md:grid-cols-3 gap-4 gap-y-8">
         <DragDropContext onDragEnd={handleTaskDrag}>

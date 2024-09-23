@@ -14,16 +14,16 @@ const customStyles = {
     width: "90%",
     maxWidth: "500px",
 
-    "@media(min-width: 640px)": {
+    "@media(minWidth: 640px)": {
       width: "80%", // Tablets (sm)
     },
-    "@media(min-width: 768px)": {
+    "@media(minWidth: 768px)": {
       width: "60%", // Tablets and small laptops (md)
     },
-    "@media(min-width: 1024px)": {
+    "@media(minWidth: 1024px)": {
       width: "40%", // Laptops and desktops (lg)
     },
-    "@media(min-width: 1280px)": {
+    "@media(minWidth: 1280px)": {
       width: "30%", // Larger screens (xl)
     },
   },
@@ -48,7 +48,7 @@ const ModalComponent = (props: IModalProps) => {
   };
 
   return (
-    <div>
+    <div className="relative">
       <Modal
         isOpen={isOpen}
         onAfterOpen={onAfterOpen}
@@ -56,7 +56,10 @@ const ModalComponent = (props: IModalProps) => {
         style={customStyles}
         contentLabel={contentLabel}
       >
-        <button className="text-end ml-auto w-full" onClick={onRequestClose}>
+        <button
+          className=" absolute top-0 right-0 my-2 mx-4"
+          onClick={onRequestClose}
+        >
           &#10005;
         </button>
         {renderChildrenWithProps(children)}

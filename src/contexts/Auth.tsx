@@ -20,7 +20,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState<boolean>(true);
 
   const signOut = async () => {
-    const { error } = await auth.signOut();
+    const { error } = await auth.signOut({ scope: "local" });
     console.error("error: ", error);
     if (!error) {
       setUser(null);

@@ -33,7 +33,7 @@ const VerticalCard = (props: IVerticalCardProps) => {
   };
 
   return (
-    <section className="bg-gray-300 w-full rounded-md h-[90%] overflow-y-scroll pb-8 shadow-xl">
+    <section className="bg-gray-300 w-full rounded-md min-h-48 md:h-[90%] overflow-y-scroll pb-8 shadow-xl">
       <div className="flex items-center justify-between w-full sticky top-0 backdrop-blur-xl">
         <div className="text-start text-gray-600 capitalize px-4 py-2 flex items-center gap-2">
           <button
